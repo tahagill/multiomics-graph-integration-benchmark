@@ -1,0 +1,34 @@
+# Virtual environment
+.venv/
+
+# Raw GDC downloads — large, re-downloadable
+data/raw/
+
+# GDC client binary
+gdc-client-bin/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs (optional — comment out if you want to track logs)
+logs/*.log
+
+# Large raw matrix parquets — too large for GitHub (>100 MB), reproducible from Step 03
+data/processed/methylation_matrix_raw.parquet
+data/processed/rna_matrix_raw.parquet
+
+# Editor
+.vscode/
+*.swp
+*~

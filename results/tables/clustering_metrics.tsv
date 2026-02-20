@@ -1,0 +1,6 @@
+k	primary	silhouette	stability_mean_ari	stability_std_ari	ari_pam50	nmi_pam50	logrank_p
+2	True	0.2278	1.0000	0.0000	0.4432	0.4951	0.1438
+3	False	0.0546			0.2955	0.4261	0.2690
+4	False	-0.0381			0.3402	0.4312	0.1393
+5	False	-0.0307			0.2559	0.4056	0.0646
+6	False	-0.0417			0.2532	0.4225	0.0630

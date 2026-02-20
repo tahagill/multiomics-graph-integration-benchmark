@@ -1,0 +1,3 @@
+method	Unadj_Cindex	Adj_Cindex(+Age+Stage)
+SNF	0.6814	0.7514
+RNA-only	0.6323	0.7178

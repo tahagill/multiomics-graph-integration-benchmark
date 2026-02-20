@@ -1,0 +1,7 @@
+config	cluster_sizes	ari_pam50	nmi_pam50	logrank_p	cv_cindex
+K=20 · 5000feat · euclidean	[503, 141]	0.4432	0.4951	0.1438	0.6914
+K=10 · 5000feat · euclidean	[126, 518]	0.4027	0.4887	0.2727	0.6832
+K=15 · 5000feat · euclidean	[131, 513]	0.4167	0.5009	0.2989	0.6993
+K=25 · 5000feat · euclidean	[132, 512]	0.4129	0.4922	0.3826	0.6717
+K=20 · 2000feat · euclidean	[136, 508]	0.4308	0.5009	0.2141	0.5705
+K=20 · 5000feat · cosine	[141, 503]	0.4432	0.4951	0.1438	0.6538

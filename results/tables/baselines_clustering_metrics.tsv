@@ -1,0 +1,6 @@
+method	cluster_sizes	ari_pam50	nmi_pam50	stability_mean_ari	stability_std_ari	logrank_p	stability_pass
+SNF (proposed)	[503, 141]	0.4432	0.4951	1.0000	0.0000	0.1438	True
+Single-omics RNA	[475, 169]	0.4647	0.4276	1.0000	0.0000	0.0222	True
+Single-omics CNV	[364, 280]	0.0474	0.0371	1.0000	0.0000	0.6967	True
+Single-omics Methylation	[381, 263]	0.2168	0.2599	1.0000	0.0000	0.7278	True
+Early Integration (concat PCA)	[314, 330]	0.1526	0.1746	1.0000	0.0000	0.1107	True

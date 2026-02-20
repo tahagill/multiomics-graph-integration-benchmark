@@ -1,0 +1,3 @@
+cluster	n	ER_pos	ER_pos_pct	PR_pos	PR_pos_pct	Her2_pos	Her2_pos_pct	TN	TN_pct	ER_chi2_p	PR_chi2_p	Her2_chi2_p	TN_chi2_p
+0	503	467	92.8429	414	82.3062	56	11.1332	5	0.9940	0.0000	0.0000	0.2912	0.0000
+1	141	22	15.6028	10	7.0922	8	5.6738	64	45.3901	0.0000	0.0000	0.2912	0.0000

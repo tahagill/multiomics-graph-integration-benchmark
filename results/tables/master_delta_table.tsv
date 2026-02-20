@@ -1,0 +1,7 @@
+comparison	Delta_Cindex	Delta_CI_lo	Delta_CI_hi	Sig
+RNA-only	0.0492	-0.0363	0.1436	False
+CNV-only	0.1221	0.0203	0.2110	True
+Meth-only	0.0891	-0.0128	0.1895	False
+Early-concat	0.0638	-0.0401	0.1618	False
+Late-C1 (risk avg)	0.0301	-0.0509	0.1110	False
+Late-C2 (concat)	0.0907	0.0110	0.1702	True

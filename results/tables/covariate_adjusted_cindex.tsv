@@ -1,0 +1,3 @@
+method	unadj_oof_cindex	adj_oof_cindex	unadj_fold_mean	adj_fold_mean
+SNF	0.6814	0.7514	0.6914	0.7620
+RNA-only	0.6323	0.7178	0.6827	0.7594
