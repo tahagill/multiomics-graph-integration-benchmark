@@ -29,6 +29,7 @@ import matplotlib.gridspec as gridspec
 import matplotlib.patches as mpatches
 from matplotlib.colors import ListedColormap
 from pathlib import Path
+import mygene
 
 logging.basicConfig(
     level=logging.INFO,
@@ -334,6 +335,31 @@ for _, row in saved_cnv.iterrows():
     symbol_map[row["ensg_id"]] = row["symbol"]
 cnv_full["symbol"] = cnv_full["ensg_id"].map(symbol_map).fillna(cnv_full["ensg_id"])
 
+# Resolve remaining ENSG IDs to gene symbols via mygene
+unresolved_mask = cnv_full["symbol"].str.startswith("ENSG")
+if unresolved_mask.any():
+    mg = mygene.MyGeneInfo()
+    ensg_ids = cnv_full.loc[unresolved_mask, "ensg_id"].tolist()
+    ensg_bare = [e.split(".")[0] for e in ensg_ids]
+    log.info("  Resolving %d ENSG IDs via mygene …", len(ensg_bare))
+    results = mg.querymany(ensg_bare, scopes="ensembl.gene",
+                           fields="symbol", species="human",
+                           returnall=False, verbose=False)
+    resolved = {}
+    for r in results:
+        if "symbol" in r:
+            resolved[r["query"]] = r["symbol"]
+    # apply back using bare ENSG (strip version)
+    def apply_resolved(row):
+        if row["symbol"].startswith("ENSG"):
+            bare = row["ensg_id"].split(".")[0]
+            return resolved.get(bare, row["symbol"])
+        return row["symbol"]
+    cnv_full["symbol"] = cnv_full.apply(apply_resolved, axis=1)
+    n_resolved = (~cnv_full["symbol"].str.startswith("ENSG")).sum()
+    log.info("  Symbol resolution: %d / %d features now have gene symbols",
+             n_resolved, len(cnv_full))
+
 # Deduplicate: GISTIC2 gives identical scores to genes within the same segment.
 # Round delta to 5 decimal places and keep best-annotated gene per unique segment.
 cnv_full["delta_round"] = cnv_full["delta_mean"].round(5)
@@ -356,9 +382,9 @@ top_luminal["direction"] = "UP_Luminal"
 # Display: prefer symbols, fall back to short ENSG ID
 def make_display(row):
     s = row["symbol"]
-    if s.startswith("ENSG") or s.startswith("LOC") or s.startswith("LINC"):
-        return row["ensg_id"].split(".")[0]  # strip version
-    return s
+    if s.startswith("ENSG"):
+        return row["ensg_id"].split(".")[0][:14]  # short ENSG, strip version
+    return s  # use whatever symbol we have (including LOC/LINC — they are real names)
 
 top_basal["display"]   = top_basal.apply(make_display, axis=1)
 top_luminal["display"] = top_luminal.apply(make_display, axis=1)
