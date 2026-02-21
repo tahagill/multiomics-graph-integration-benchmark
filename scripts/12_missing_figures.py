@@ -304,14 +304,67 @@ log.info("  Saved: %s", out_path)
 # ══════════════════════════════════════════════════════════════════════════════
 log.info("Plotting: fig_de_cnv …")
 
-cnv_df = pd.read_csv(TABLES / "top_de_cnv.tsv", sep="\t")
-cnv_df["display"] = cnv_df["symbol"].where(
-    ~cnv_df["symbol"].str.startswith("ENSG"), other=cnv_df["ensg_id"]
-)
+# The pre-saved top_de_cnv.tsv only has 20 rows and all UP_Basal entries share
+# one GISTIC2 segment (identical delta). Recompute from the full CNV matrix to
+# get segment-aware deduplication across all 5000 features.
+cnv_mat = pd.read_parquet(PROCESSED / "cnv_preprocessed.parquet")  # (features x patients)
+# align patients with cluster assignments
+common_cols = [c for c in cnv_mat.columns if c in cluster_k2.index]
+cnv_aligned = cnv_mat[common_cols]
+c0_ids = cluster_k2[cluster_k2 == 0].index
+c1_ids = cluster_k2[cluster_k2 == 1].index
+c0_cols = [c for c in common_cols if c in c0_ids]
+c1_cols = [c for c in common_cols if c in c1_ids]
 
-# top 10 UP_Basal (highest positive delta) + top 10 UP_Luminal (most negative delta)
-top_basal   = cnv_df[cnv_df["direction"] == "UP_Basal"].nlargest(10, "delta_mean")
-top_luminal = cnv_df[cnv_df["direction"] == "UP_Luminal"].nsmallest(10, "delta_mean")
+mean_basal   = cnv_aligned[c1_cols].mean(axis=1)
+mean_luminal = cnv_aligned[c0_cols].mean(axis=1)
+delta_all    = mean_basal - mean_luminal
+
+cnv_full = pd.DataFrame({
+    "ensg_id":     delta_all.index,
+    "delta_mean":  delta_all.values,
+    "mean_basal":  mean_basal.values,
+    "mean_luminal": mean_luminal.values,
+})
+
+# Load symbol map from the saved table for any known gene symbols
+symbol_map = {}
+saved_cnv  = pd.read_csv(TABLES / "top_de_cnv.tsv", sep="\t")
+for _, row in saved_cnv.iterrows():
+    symbol_map[row["ensg_id"]] = row["symbol"]
+cnv_full["symbol"] = cnv_full["ensg_id"].map(symbol_map).fillna(cnv_full["ensg_id"])
+
+# Deduplicate: GISTIC2 gives identical scores to genes within the same segment.
+# Round delta to 5 decimal places and keep best-annotated gene per unique segment.
+cnv_full["delta_round"] = cnv_full["delta_mean"].round(5)
+
+def sym_quality(s):
+    if pd.isna(s) or s.startswith("ENSG"): return 0
+    if s.startswith("LOC") or s.startswith("LINC"): return 1
+    return 2
+
+cnv_full["_sq"] = cnv_full["symbol"].map(sym_quality)
+cnv_full = cnv_full.sort_values("_sq", ascending=False)
+cnv_dedup = cnv_full.drop_duplicates(subset=["delta_round"]).drop(columns=["_sq"])
+
+# Top 10 per direction
+top_basal   = cnv_dedup.nlargest(10, "delta_mean").copy()
+top_luminal = cnv_dedup.nsmallest(10, "delta_mean").copy()
+top_basal["direction"]   = "UP_Basal"
+top_luminal["direction"] = "UP_Luminal"
+
+# Display: prefer symbols, fall back to short ENSG ID
+def make_display(row):
+    s = row["symbol"]
+    if s.startswith("ENSG") or s.startswith("LOC") or s.startswith("LINC"):
+        return row["ensg_id"].split(".")[0]  # strip version
+    return s
+
+top_basal["display"]   = top_basal.apply(make_display, axis=1)
+top_luminal["display"] = top_luminal.apply(make_display, axis=1)
+
+log.info("  CNV: %d unique Basal segments, %d unique Luminal segments (from %d total deduped)",
+         len(top_basal), len(top_luminal), len(cnv_dedup))
 
 plot_df = pd.concat([top_luminal, top_basal]).reset_index(drop=True)
 colors  = [CLUSTER_COLORS[1] if d == "UP_Basal" else CLUSTER_COLORS[0]
@@ -329,15 +382,22 @@ ax.set_yticklabels(plot_df["display"], fontsize=8)
 ax.set_xlabel("Δ mean CNV score (Basal − Luminal)", fontsize=9)
 ax.set_title(
     "Top Differential Copy Number Variation Loci\n"
-    "Top 10 amplified in Basal (C1) · Top 10 amplified in Luminal (C0)",
+    "Top 10 amplified in Basal (C1) · Top 10 amplified in Luminal (C0)\n"
+    "(deduplicated by GISTIC2 segment — one representative gene per region)",
     fontsize=9
 )
-ax.axhline(9.5, color="#AAAAAA", linewidth=0.7, linestyle="--")
-ax.text(ax.get_xlim()[0] * 0.98, 4.5, "← Higher in\nLuminal (C0)",
-        ha="left", va="center", fontsize=7.5, color=CLUSTER_COLORS[0])
-ax.text(ax.get_xlim()[1] * 0.98 if ax.get_xlim()[1] > 0 else 0.01,
-        14.5, "Higher in\nBasal (C1) →",
-        ha="right", va="center", fontsize=7.5, color=CLUSTER_COLORS[1])
+boundary_y = len(top_luminal) - 0.5
+ax.axhline(boundary_y, color="#AAAAAA", linewidth=0.7, linestyle="--")
+
+xmin = plot_df["delta_mean"].min()
+xmax = plot_df["delta_mean"].max()
+xrange = xmax - xmin
+ax.text(xmin - xrange * 0.02, len(top_luminal) / 2,
+        "← Higher in\nLuminal (C0)",
+        ha="right", va="center", fontsize=7.5, color=CLUSTER_COLORS[0])
+ax.text(xmax + xrange * 0.02, len(top_luminal) + len(top_basal) / 2,
+        "Higher in\nBasal (C1) →",
+        ha="left", va="center", fontsize=7.5, color=CLUSTER_COLORS[1])
 
 legend_patches = [
     mpatches.Patch(color=CLUSTER_COLORS[1], label="Higher in Basal (C1)"),
