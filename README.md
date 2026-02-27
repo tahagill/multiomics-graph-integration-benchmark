@@ -2,9 +2,8 @@
 
 **Taha Ahmad** — Middle East Technical University
 
-> Preprint: [bioRxiv BIORXIV/2026/708481](https://www.biorxiv.org) · [arXiv q-bio.GN](https://arxiv.org)  
 > Full PDF: [`snf-multiOmics-benchmark.pdf`](snf-multiOmics-benchmark.pdf)
-
+> In-Depth explanation of the papers biology and logic : [`PROJECT_REPORT.md`](PROJECT_REPORT.md)
 ---
 
 ## Overview
