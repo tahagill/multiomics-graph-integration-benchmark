@@ -1,4 +1,4 @@
-# Project Report: Graph-Based Multi-Omics Integration in Breast Cancer
+# Research Report: Graph-Based Multi-Omics Integration in Breast Cancer
 
 **Full Title:** Graph-Based Multi-Omics Integration Improves Subtype Recovery and Survival Prediction Over Classical Integration Strategies in TCGA-BRCA
 
@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-1. [What Is This Project?](#1-what-is-this-project)
+1. [What Is This Research?](#1-what-is-this-research)
 2. [Why Does This Matter?](#2-why-does-this-matter)
 3. [Biology Background — What You Need to Know](#3-biology-background--what-you-need-to-know)
 4. [The Research Questions](#4-the-research-questions)
@@ -22,7 +22,7 @@
 
 ---
 
-## 1. What Is This Project?
+## 1. What Is This Research?
 
 This is a computational biology study asking a simple but important question:
 
@@ -60,7 +60,7 @@ The question is: **how do you combine them?** You can:
 - Compute predictions from each separately and average them (late integration)
 - Build a similarity structure from each type and fuse those structures (graph-based fusion)
 
-This project tests which of these approaches works best, measured rigorously.
+This Research tests which of these approaches works best, measured rigorously.
 
 ---
 
@@ -107,7 +107,7 @@ Clinically, breast cancers are classified into molecular subtypes based on gene 
 - **HER2** = Human Epidermal Growth Factor Receptor 2 (a growth-promoting protein)
 - **Triple-negative (TNBC)** = tumour expresses none of the three above; no targeted therapy available; must rely on chemotherapy
 
-The PAM50 classification is the current clinical gold standard. In this project, we use it as **biological ground truth** to validate our computational clusters.
+The PAM50 classification is the current clinical gold standard. In this research, we use it as **biological ground truth** to validate our computational clusters.
 
 ### 3.4 Overall Survival (OS)
 
@@ -586,7 +586,7 @@ Hardware constraints (HDD, not SSD; limited RAM) prevented testing 10,000 featur
 
 ## 13. Key Numbers — Quick Reference
 
-For anyone asked about specific numbers from this project:
+For anyone asked about specific numbers from this research:
 
 | Metric | Value |
 |--------|-------|
