@@ -2,7 +2,7 @@
 
 **Taha Ahmad** — Middle East Technical University
 
-> Full PDF: [`snf-multiOmics-benchmark.pdf`](snf-multiOmics-benchmark.pdf)
+> Full PDF: [`snf-multiOmics-benchmark.pdf`](snf-multiOmics-benchmark.pdf) | 
 > In-Depth explanation of the papers biology and logic : [`PROJECT_REPORT.md`](PROJECT_REPORT.md)
 ---
 
