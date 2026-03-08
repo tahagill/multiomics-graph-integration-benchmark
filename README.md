@@ -127,18 +127,6 @@ NMI varies by ≤ 0.013 across K = 10–25. Results are not inflated by paramete
 
 ---
 
-## Citation
-
-If you use this code or findings, please cite the preprint:
-
-```
-Ahmad, T. (2026). Graph-Based Multi-Omics Integration Improves Subtype Recovery and
-Survival Prediction Over Classical Integration Strategies in TCGA-BRCA.
-bioRxiv. https://doi.org/10.1101/BIORXIV/2026/708481
-```
-
----
-
 ## License
 
 Code: [MIT](LICENSE)  
